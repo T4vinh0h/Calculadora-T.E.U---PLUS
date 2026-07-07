@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora T.E.U - PLUS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .category-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .calculator-card {
+            transition: all 0.3s ease;
+        }
+        .calculator-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .result-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 6px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">
+                <i class="fas fa-calculator text-purple-600"></i> Calculadora T.E.U - PLUS
+            </h1>
+            <p class="text-gray-600">Calculadora completa com múltiplas funcionalidades</p>
+        </header>
+
+        <!-- Category Navigation -->
+        <nav class="mb-8">
+            <div class="flex flex-wrap justify-center gap-2" id="categoryNav">
+                <button class="category-btn active px-4 py-2 rounded-full bg-white shadow-md hover:shadow-lg transition-all" data-category="math">
+                    <i class="fas fa-calculator mr-2"></i>Matemática
+                </button>
+                <button class="category-btn px-4 py-2 rounded-full bg-white shadow-md hover:shadow-lg transition-all" data-category="geometry">
+                    <i class="fas fa-shapes mr-2"></i>Geometria
+                </button>
+                <button class="category-btn px-4 py-2 rounded-full bg-white shadow-md hover:shadow-lg transition-all" data-category="converters">
+                    <i class="fas fa-exchange-alt mr-2"></i>Conversores
+                </button>
+                <button class="category-btn px-4 py-2 rounded-full bg-white shadow-md hover:shadow-lg transition-all" data-category="finance">
+                    <i class="fas fa-dollar-sign mr-2"></i>Finanças
+                </button>
+                <button class="category-btn px-4 py-2 rounded-full bg-white shadow-md hover:shadow-lg transition-all" data-category="health">
+                    <i class="fas fa-heart mr-2"></i>Saúde
+                </button>
+                <button class="category-btn px-4 py-2 rounded-full bg-white shadow-md hover:shadow-lg transition-all" data-category="datetime">
+                    <i class="fas fa-calendar mr-2"></i>Data/Hora
+                </button>
+                <button class="category-btn px-4 py-2 rounded-full bg-white shadow-md hover:shadow-lg transition-all" data-category="transport">
+                    <i class="fas fa-car mr-2"></i>Transporte
+                </button>
+                <button class="category-btn px-4 py-2 rounded-full bg-white shadow-md hover:shadow-lg transition-all" data-category="electrical">
+                    <i class="fas fa-bolt mr-2"></i>Elétrica
+                </button>
+            </div>
+        </nav>
+
+        <!-- Subcategory Navigation -->
+        <nav class="mb-6" id="subcategoryNav">
+            <div class="flex flex-wrap justify-center gap-2" id="subcategoryButtons">
+                <!-- Dynamic subcategory buttons will be inserted here -->
+            </div>
+        </nav>
+
+        <!-- Calculator Container -->
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white rounded-2xl shadow-xl p-6 calculator-card">
+                <div id="calculatorContent">
+                    <!-- Dynamic calculator content will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
