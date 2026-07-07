@@ -74,6 +74,13 @@ const categories = {
         subcategories: {
             ohm: 'Lei de Ohm'
         }
+    },
+    equations: {
+        name: 'Equações',
+        icon: 'fa-square-root-alt',
+        subcategories: {
+            symbolic: 'Calculadora Simbólica'
+        }
     }
 };
 
@@ -97,7 +104,16 @@ function setupCategoryNavigation() {
             btn.classList.add('active');
             currentCategory = btn.dataset.category;
             currentSubcategory = Object.keys(categories[currentCategory].subcategories)[0];
-            renderSubcategoryButtons();
+            
+            // Esconder subcategoria nav se for categoria de equações
+            const subcategoryNav = document.getElementById('subcategoryNav');
+            if (currentCategory === 'equations') {
+                subcategoryNav.style.display = 'none';
+            } else {
+                subcategoryNav.style.display = 'block';
+                renderSubcategoryButtons();
+            }
+            
             renderCalculator();
         });
     });
@@ -157,6 +173,9 @@ function renderCalculator() {
             break;
         case 'electrical':
             renderElectricalCalculator(container);
+            break;
+        case 'equations':
+            renderEquationsCalculator(container);
             break;
     }
 }
@@ -1986,4 +2005,347 @@ function calculateOhm(calcType) {
     
     document.getElementById('ohmResult').classList.remove('hidden');
     document.getElementById('ohmResultValue').textContent = resultText;
+}
+
+// ==================== EQUAÇÕES ====================
+function renderEquationsCalculator(container) {
+    switch(currentSubcategory) {
+        case 'symbolic':
+            container.innerHTML = `
+                <h2 class="text-2xl font-bold mb-4 text-gray-800"><i class="fas fa-square-root-alt mr-2"></i>Calculadora Simbólica de Equações</h2>
+                
+                <!-- Function Keyboard -->
+                <div class="function-keyboard">
+                    <!-- Row 1 - Blue -->
+                    <div class="keyboard-row row-blue">
+                        <button class="func-btn" data-func="+">+</button>
+                        <button class="func-btn" data-func="-">-</button>
+                        <button class="func-btn" data-func="*">*</button>
+                        <button class="func-btn" data-func="/">÷</button>
+                        <button class="func-btn" data-func="frac">a/b</button>
+                        <button class="func-btn" data-func="π">π</button>
+                        <button class="func-btn" data-func="^2">x²</button>
+                        <button class="func-btn" data-func="^">xⁿ</button>
+                        <button class="func-btn" data-func="sqrt">√</button>
+                        <button class="func-btn" data-func="cbrt">³√</button>
+                        <button class="func-btn" data-func="nthroot">ⁿ√</button>
+                        <button class="func-btn" data-func="log">log_b^x</button>
+                        <button class="func-btn" data-func="ln">ln x</button>
+                    </div>
+                    
+                    <!-- Row 2 - Green -->
+                    <div class="keyboard-row row-green">
+                        <button class="func-btn" data-func="sin">sen(x)</button>
+                        <button class="func-btn" data-func="cos">cos(x)</button>
+                        <button class="func-btn" data-func="tan">tg(x)</button>
+                        <button class="func-btn" data-func="cot">cotg(x)</button>
+                        <button class="func-btn" data-func="sec">sec(x)</button>
+                        <button class="func-btn" data-func="csc">csc(x)</button>
+                        <button class="func-btn" data-func="asin">sen⁻¹(x)</button>
+                        <button class="func-btn" data-func="acos">cos⁻¹(x)</button>
+                        <button class="func-btn" data-func="atan">tg⁻¹(x)</button>
+                        <button class="func-btn" data-func="acot">cotg⁻¹(x)</button>
+                        <button class="func-btn" data-func="asec">sec⁻¹(x)</button>
+                        <button class="func-btn" data-func="acsc">csc⁻¹(x)</button>
+                    </div>
+                    
+                    <!-- Row 3 - Pink -->
+                    <div class="keyboard-row row-pink">
+                        <button class="func-btn" data-func="sinh">senh(x)</button>
+                        <button class="func-btn" data-func="cosh">cosh(x)</button>
+                        <button class="func-btn" data-func="tanh">tgh(x)</button>
+                        <button class="func-btn" data-func="coth">cotgh(x)</button>
+                        <button class="func-btn" data-func="sech">sech(x)</button>
+                        <button class="func-btn" data-func="csch">csch(x)</button>
+                        <button class="func-btn" data-func="asinh">senh⁻¹(x)</button>
+                        <button class="func-btn" data-func="acosh">cosh⁻¹(x)</button>
+                        <button class="func-btn" data-func="atanh">tgh⁻¹(x)</button>
+                        <button class="func-btn" data-func="acoth">cotgh⁻¹(x)</button>
+                        <button class="func-btn" data-func="asech">sech⁻¹(x)</button>
+                        <button class="func-btn" data-func="acsch">csch⁻¹(x)</button>
+                    </div>
+                    
+                    <!-- Legend -->
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #FCE4EC;"></div>
+                            <span>Arco hiperbólico</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #F8BBD0;"></div>
+                            <span>Função hiperbólica</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #C8E6C9;"></div>
+                            <span>Arco</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Equation Display (LaTeX) -->
+                <div class="equation-display" id="equationDisplay">
+                    <span id="renderedEquation">Digite uma equação para visualizar</span>
+                </div>
+
+                <!-- Input Section -->
+                <div class="input-section">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Escreva a Equação a ser calculada:</label>
+                    <input type="text" id="equationInput" class="equation-input" placeholder="Ex: x^5 + x^21 / x^68 = 43X * 28">
+                    <div class="mt-4">
+                        <button class="calculate-btn" onclick="calculateEquation()">Calcular</button>
+                    </div>
+                </div>
+
+                <!-- Result Section -->
+                <div class="result-section" id="resultSection" style="display: none;">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Resultado:</h3>
+                    
+                    <div class="result-form">
+                        <h4>Forma Simbólica:</h4>
+                        <div class="math-expression" id="symbolicResult"></div>
+                    </div>
+                    
+                    <div class="result-form">
+                        <h4>Forma com Casas Decimais:</h4>
+                        <div class="math-expression" id="decimalResult"></div>
+                    </div>
+                </div>
+            `;
+            
+            // Configurar o teclado de funções após renderizar
+            setTimeout(() => {
+                setupEquationFunctions();
+            }, 0);
+            break;
+    }
+}
+
+// Configurar funções da calculadora de equações
+function setupEquationFunctions() {
+    const buttons = document.querySelectorAll('.func-btn');
+    const input = document.getElementById('equationInput');
+    
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const func = btn.dataset.func;
+            insertEquationFunction(func);
+        });
+    });
+    
+    input.addEventListener('input', () => {
+        updateEquationDisplay();
+    });
+    
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            calculateEquation();
+        }
+    });
+}
+
+// Inserir função no campo de entrada
+function insertEquationFunction(func) {
+    const input = document.getElementById('equationInput');
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+    const text = input.value;
+    
+    let insertion = '';
+    
+    switch(func) {
+        case '+': insertion = '+'; break;
+        case '-': insertion = '-'; break;
+        case '*': insertion = '*'; break;
+        case '/': insertion = '/'; break;
+        case 'frac': insertion = 'frac(,)'; break;
+        case 'π': insertion = 'pi'; break;
+        case '^2': insertion = '^2'; break;
+        case '^': insertion = '^'; break;
+        case 'sqrt': insertion = 'sqrt('; break;
+        case 'cbrt': insertion = 'cbrt('; break;
+        case 'nthroot': insertion = 'nthroot(,'; break;
+        case 'log': insertion = 'log(,'; break;
+        case 'ln': insertion = 'ln('; break;
+        case 'sin': insertion = 'sin('; break;
+        case 'cos': insertion = 'cos('; break;
+        case 'tan': insertion = 'tan('; break;
+        case 'cot': insertion = 'cot('; break;
+        case 'sec': insertion = 'sec('; break;
+        case 'csc': insertion = 'csc('; break;
+        case 'asin': insertion = 'asin('; break;
+        case 'acos': insertion = 'acos('; break;
+        case 'atan': insertion = 'atan('; break;
+        case 'acot': insertion = 'acot('; break;
+        case 'asec': insertion = 'asec('; break;
+        case 'acsc': insertion = 'acsc('; break;
+        case 'sinh': insertion = 'sinh('; break;
+        case 'cosh': insertion = 'cosh('; break;
+        case 'tanh': insertion = 'tanh('; break;
+        case 'coth': insertion = 'coth('; break;
+        case 'sech': insertion = 'sech('; break;
+        case 'csch': insertion = 'csch('; break;
+        case 'asinh': insertion = 'asinh('; break;
+        case 'acosh': insertion = 'acosh('; break;
+        case 'atanh': insertion = 'atanh('; break;
+        case 'acoth': insertion = 'acoth('; break;
+        case 'asech': insertion = 'asech('; break;
+        case 'acsch': insertion = 'acsch('; break;
+    }
+    
+    const newText = text.substring(0, start) + insertion + text.substring(end);
+    input.value = newText;
+    input.focus();
+    
+    const newPosition = start + insertion.length;
+    input.setSelectionRange(newPosition, newPosition);
+    
+    updateEquationDisplay();
+}
+
+// Atualizar display da equação
+function updateEquationDisplay() {
+    const input = document.getElementById('equationInput');
+    const display = document.getElementById('renderedEquation');
+    
+    if (!input || !display) return;
+    
+    const equation = input.value;
+    
+    if (!equation.trim()) {
+        display.textContent = 'Digite uma equação para visualizar';
+        return;
+    }
+    
+    try {
+        // Converter frações do formato frac(a,b) para formato do math.js
+        let processedEquation = equation.replace(/frac\(([^,]+),([^)]+)\)/g, '($1)/($2)');
+        
+        const expr = math.parse(processedEquation);
+        const latex = expr.toTex();
+        
+        // Usar KaTeX para renderização
+        katex.render(latex, display, {
+            displayMode: true,
+            throwOnError: false,
+            fontSize: 20
+        });
+    } catch (error) {
+        // Fallback para renderização básica
+        let rendered = equation
+            .replace(/frac\(([^,]+),([^)]+)\)/g, '\\frac{$1}{$2}')
+            .replace(/\*/g, '\\cdot ')
+            .replace(/\//g, '\\div ')
+            .replace(/sqrt\(/g, '\\sqrt{')
+            .replace(/cbrt\(/g, '\\sqrt[3]{')
+            .replace(/sin\(/g, '\\sin(')
+            .replace(/cos\(/g, '\\cos(')
+            .replace(/tan\(/g, '\\tan(')
+            .replace(/\^(\d+)/g, '^{$1}')
+            .replace(/\^/g, '^{}');
+        
+        try {
+            katex.render(rendered, display, {
+                displayMode: true,
+                throwOnError: false,
+                fontSize: 20
+            });
+        } catch (e) {
+            display.textContent = equation;
+        }
+    }
+}
+
+// Calcular equação
+function calculateEquation() {
+    const input = document.getElementById('equationInput');
+    
+    if (!input) return;
+    
+    const equation = input.value;
+    
+    if (!equation.trim()) {
+        alert('Por favor, digite uma equação para calcular');
+        return;
+    }
+    
+    try {
+        const result = parseAndEvaluateEquation(equation);
+        displayEquationResults(result);
+    } catch (error) {
+        alert('Erro ao calcular equação: ' + error.message);
+    }
+}
+
+// Parser e avaliação da equação
+function parseAndEvaluateEquation(equation) {
+    try {
+        const expr = math.parse(equation);
+        
+        let simplified;
+        try {
+            simplified = expr.simplify();
+        } catch (e) {
+            simplified = expr;
+        }
+        
+        let numericResult;
+        try {
+            if (expr.variables().length > 0) {
+                numericResult = 'Contém variáveis - não é possível calcular numericamente';
+            } else {
+                numericResult = expr.evaluate();
+            }
+        } catch (e) {
+            numericResult = 'Não foi possível calcular numericamente';
+        }
+        
+        return {
+            symbolic: simplified.toString(),
+            decimal: numericResult
+        };
+    } catch (error) {
+        return {
+            symbolic: equation,
+            decimal: 'Não foi possível processar a equação'
+        };
+    }
+}
+
+// Exibir resultados
+function displayEquationResults(result) {
+    const resultSection = document.getElementById('resultSection');
+    const symbolicResult = document.getElementById('symbolicResult');
+    const decimalResult = document.getElementById('decimalResult');
+    
+    if (!resultSection || !symbolicResult || !decimalResult) return;
+    
+    resultSection.style.display = 'block';
+    
+    try {
+        const expr = math.parse(result.symbolic);
+        const latex = expr.toTex();
+        
+        katex.render(latex, symbolicResult, {
+            displayMode: true,
+            throwOnError: false,
+            fontSize: 16
+        });
+    } catch (error) {
+        symbolicResult.textContent = result.symbolic;
+    }
+    
+    if (typeof result.decimal === 'number') {
+        decimalResult.innerHTML = formatEquationDecimalResult(result.decimal);
+    } else {
+        decimalResult.textContent = result.decimal;
+    }
+}
+
+// Formatar resultado decimal
+function formatEquationDecimalResult(value) {
+    if (Number.isInteger(value)) {
+        return value.toString();
+    } else {
+        return value.toFixed(2).replace(/\.00$/, '');
+    }
 }
